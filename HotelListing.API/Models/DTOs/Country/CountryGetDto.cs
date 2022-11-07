@@ -4,13 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HotelListing.API.Models.DTOs.Country
 {
-    public class CountryGetDto
+    public class CountryGetDto : BaseCountryDto
     {
-        [Required]
         public int Id { get; set; }
-        [Required]
-        public string Name { get; set; }
-        [Required]
-        public string ShortName { get; set; }
     }
 }
