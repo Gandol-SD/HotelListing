@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using HotelListing.API.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace HotelListing.API.Data
 {
@@ -8,5 +9,8 @@ namespace HotelListing.API.Data
         {
 
         }
+
+        public DbSet<Hotel> Hotels { get; set; }
+        public DbSet<Country> Countries { get; set; }
     }
 }
