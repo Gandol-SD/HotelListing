@@ -1,8 +1,8 @@
 ﻿using Microsoft.Build.Framework;
 
-namespace HotelListing.API.Models.DTOs
+namespace HotelListing.API.Models.DTOs.Country
 {
-    public class CountryDto
+    public class CountryPostDto
     {
         [Required]
         public string Name { get; set; }
