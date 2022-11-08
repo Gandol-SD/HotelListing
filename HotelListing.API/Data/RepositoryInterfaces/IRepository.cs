@@ -9,5 +9,7 @@
         Task DeleteAsync(int id);
 
         Task<bool> Exists(int id);
+
+        Task saveAsync();
     }
 }

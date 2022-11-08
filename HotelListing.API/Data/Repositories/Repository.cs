@@ -55,5 +55,10 @@ namespace HotelListing.API.Data.Repositories
             _dbx.Update(entity);
             await _dbx.SaveChangesAsync();
         }
+
+        public async Task saveAsync()
+        {
+            await _dbx.SaveChangesAsync();
+        }
     }
 }
