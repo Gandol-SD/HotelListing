@@ -4,3 +4,4 @@
  - Initial Commit is actually the ending of section 3
  - Section 4
  - Section 6
+ - Section 7
