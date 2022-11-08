@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using HotelListing.API.Data;
 using HotelListing.API.Models;
 using HotelListing.API.Data.RepositoryInterfaces;
+using AutoMapper;
+using HotelListing.API.Models.DTOs.Hotel;
 
 namespace HotelListing.API.Controllers
 {
@@ -16,22 +18,25 @@ namespace HotelListing.API.Controllers
     public class HotelsController : ControllerBase
     {
         private readonly IHotelsRepository repo;
+        private readonly IMapper mapper;
 
-        public HotelsController(IHotelsRepository _repo)
+        public HotelsController(IHotelsRepository _repo, IMapper _mapper)
         {
             repo = _repo;
+            mapper = _mapper;
         }
 
         // GET: api/Hotels
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Hotel>>> GetHotels()
+        public async Task<ActionResult<IEnumerable<HotelDto>>> GetHotels()
         {
-            return await repo.GetAllAsync();
+            var hotels = await repo.GetAllAsync();
+            return mapper.Map<List<HotelDto>>(hotels);
         }
 
         // GET: api/Hotels/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Hotel>> GetHotel(int id)
+        public async Task<ActionResult<HotelDto>> GetHotel(int id)
         {
             var hotel = await repo.GetAsync(id);
 
@@ -40,7 +45,7 @@ namespace HotelListing.API.Controllers
                 return NotFound();
             }
 
-            return hotel;
+            return mapper.Map<HotelDto>(hotel);
         }
 
         // PUT: api/Hotels/5
@@ -76,9 +81,9 @@ namespace HotelListing.API.Controllers
         // POST: api/Hotels
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Hotel>> PostHotel(Hotel hotel)
+        public async Task<ActionResult<Hotel>> PostHotel(HotelCreateDto hotelDto)
         {
-            await repo.AddAsync(hotel);
+            Hotel hotel = await repo.AddAsync(mapper.Map<Hotel>(hotelDto));
 
             return CreatedAtAction("GetHotel", new { id = hotel.Id }, hotel);
         }
