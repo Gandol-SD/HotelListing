@@ -1,9 +1,10 @@
 ﻿using HotelListing.API.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace HotelListing.API.Data
 {
-    public class ApiDBX : DbContext
+    public class ApiDBX : IdentityDbContext<HotelUser>
     {
         public ApiDBX(DbContextOptions options) : base(options)
         {

@@ -2,6 +2,8 @@ using HotelListing.API.Configurations;
 using HotelListing.API.Data;
 using HotelListing.API.Data.Repositories;
 using HotelListing.API.Data.RepositoryInterfaces;
+using HotelListing.API.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Formatting.Compact;
@@ -15,6 +17,9 @@ builder.Services.AddDbContext<ApiDBX>(options =>
 {
     options.UseSqlServer(conString);
 });
+
+builder.Services.AddIdentityCore<HotelUser>().AddRoles<IdentityRole>().AddEntityFrameworkStores<ApiDBX>();
+
 
 builder.Services.AddAutoMapper(typeof(MapperConfig));
 
