@@ -16,7 +16,6 @@ namespace HotelListing.API.Data.Repositories
         public async Task<Country> GetDetails(int id)
         {
             return await dbx.Countries.Include(q => q.Hotels).FirstOrDefaultAsync(r => r.Id == id);
-
         }
     }
 }
