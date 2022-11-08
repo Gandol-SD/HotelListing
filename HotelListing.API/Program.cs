@@ -1,5 +1,7 @@
 using HotelListing.API.Configurations;
 using HotelListing.API.Data;
+using HotelListing.API.Data.Repositories;
+using HotelListing.API.Data.RepositoryInterfaces;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Formatting.Compact;
@@ -15,6 +17,9 @@ builder.Services.AddDbContext<ApiDBX>(options =>
 });
 
 builder.Services.AddAutoMapper(typeof(MapperConfig));
+
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<ICountriesRepository, CountriesRepository>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
