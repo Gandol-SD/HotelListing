@@ -45,7 +45,7 @@ namespace HotelListing.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult> Register([FromBody] LoginDto loginDto)
         {
-            var isValidUser = await auth.Login(loginDto);
+            var isValidUser = await auth.login(loginDto);
             if (!isValidUser) { return Unauthorized(); }
 
             return Ok();

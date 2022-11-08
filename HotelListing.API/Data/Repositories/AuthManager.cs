@@ -23,12 +23,13 @@ namespace HotelListing.API.Data.Repositories
             try
             {
                 var user = await userManager.FindByEmailAsync(loginDto.Email);
+                    if (user == null) return default;
                 isValidUser = await userManager.CheckPasswordAsync(user, loginDto.Password);
-                return isValidUser;
+                    if (!isValidUser) { return default; }
             }
             catch (Exception)
             {
-                isValidUser = false;
+                isValidUser = default;
             }
             return isValidUser;
         }
