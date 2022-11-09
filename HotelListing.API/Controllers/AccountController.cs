@@ -2,6 +2,7 @@
 using HotelListing.API.Models.DTOs.HotelUser;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Win32;
 
 namespace HotelListing.API.Controllers
 {
@@ -43,7 +44,7 @@ namespace HotelListing.API.Controllers
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, $"Exeception At {typeof(Register)}, by {userDto.Email}");
+                logger.LogError(ex, $"Exeception At api/Account/register, by {userDto.Email}");
                 return Problem(ex.Message, statusCode:500);
             }
         }
