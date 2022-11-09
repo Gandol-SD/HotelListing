@@ -4,5 +4,6 @@
     {
         public string uid { get; set; }
         public string token { get; set; }
+        public string RefreshToken { get; set; }
     }
 }

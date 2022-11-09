@@ -21,7 +21,9 @@ builder.Services.AddDbContext<ApiDBX>(options =>
     options.UseSqlServer(conString);
 });
 
-builder.Services.AddIdentityCore<HotelUser>().AddRoles<IdentityRole>().AddEntityFrameworkStores<ApiDBX>();
+builder.Services.AddIdentityCore<HotelUser>().AddRoles<IdentityRole>()
+    .AddTokenProvider<DataProtectorTokenProvider<HotelUser>>("HotelListingApi")
+    .AddEntityFrameworkStores<ApiDBX>().AddDefaultTokenProviders();
 
 
 builder.Services.AddAutoMapper(typeof(MapperConfig));
