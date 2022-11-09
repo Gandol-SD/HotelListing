@@ -3,6 +3,13 @@ using HotelListing.API.Data.RepositoryInterfaces;
 using HotelListing.API.Models;
 using HotelListing.API.Models.DTOs.HotelUser;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
+using System.Text;
+using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
 namespace HotelListing.API.Data.Repositories
 {
@@ -10,28 +17,27 @@ namespace HotelListing.API.Data.Repositories
     {
         private readonly IMapper mapper;
         private readonly UserManager<HotelUser> userManager;
+        private readonly IConfiguration config;
 
-        public AuthManager(IMapper _mapper, UserManager<HotelUser> _userManager)
+        public AuthManager(IMapper _mapper, UserManager<HotelUser> _userManager, IConfiguration _config)
         {
             mapper = _mapper;
             userManager = _userManager;
+            config = _config;
         }
 
-        public async Task<bool> login(LoginDto loginDto)
+        public async Task<AuthResponseDto> login(LoginDto loginDto)
         {
-            bool isValidUser = false;
-            try
+            var user = await userManager.FindByEmailAsync(loginDto.Email);
+            bool isValidUser = await userManager.CheckPasswordAsync(user, loginDto.Password);
+
+            if (user == null || isValidUser == false)
             {
-                var user = await userManager.FindByEmailAsync(loginDto.Email);
-                    if (user == null) return default;
-                isValidUser = await userManager.CheckPasswordAsync(user, loginDto.Password);
-                    if (!isValidUser) { return default; }
+                return null;
             }
-            catch (Exception)
-            {
-                isValidUser = default;
-            }
-            return isValidUser;
+
+            var token = await generateToken(user);
+            return new AuthResponseDto { token = token, uid = user.Id };
         }
 
         public async Task<IEnumerable<IdentityError>> Register(HotelUserDto userDto)
@@ -47,6 +53,34 @@ namespace HotelListing.API.Data.Repositories
             }
 
             return result.Errors;
+        }
+
+        public async Task<string> generateToken(HotelUser hotelUser)
+        {
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JwtSettings:Key"]));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+            var roles = await userManager.GetRolesAsync(hotelUser);
+            var roleClaims = roles.Select(x => new Claim(ClaimTypes.Role, x)).ToList();
+
+            var userClaims = await userManager.GetClaimsAsync(hotelUser);
+
+            var claims = new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, hotelUser.Email),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Email, hotelUser.Email),
+                new Claim("uid", hotelUser.Id),
+
+            }.Union(userClaims).Union(roleClaims);
+
+            var token = new JwtSecurityToken(
+                    issuer: config["JwtSettings:Issuer"],
+                    audience: config["JwtSettings:Audience"],
+                    claims: claims,
+                    expires: DateTime.Now.AddMinutes(Convert.ToInt32(config["JwtSettings:DurationInMinutes"])),
+                    signingCredentials: credentials
+                );
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }

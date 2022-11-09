@@ -39,14 +39,14 @@ namespace HotelListing.API.Controllers
 
         // Post: api/Account/login
         [HttpPost]
-        [Route("register")]
+        [Route("login")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult> Register([FromBody] LoginDto loginDto)
+        public async Task<ActionResult> Login([FromBody] LoginDto loginDto)
         {
-            var isValidUser = await auth.login(loginDto);
-            if (!isValidUser) { return Unauthorized(); }
+            var authResponse = await auth.login(loginDto);
+            if (authResponse == null) { return Unauthorized(); }
 
             return Ok();
         }
