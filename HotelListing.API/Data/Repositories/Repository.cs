@@ -22,7 +22,7 @@ namespace HotelListing.API.Data.Repositories
         public async Task DeleteAsync(int id)
         {
             var entity = await GetAsync(id);
-            if(entity == null)
+            if(entity != null)
             {
                 _dbx.Set<T>().Remove(entity);
                 await _dbx.SaveChangesAsync();

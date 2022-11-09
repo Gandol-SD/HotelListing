@@ -48,7 +48,7 @@ namespace HotelListing.API.Controllers
             var authResponse = await auth.login(loginDto);
             if (authResponse == null) { return Unauthorized(); }
 
-            return Ok();
+            return Ok(authResponse);
         }
 
     }
