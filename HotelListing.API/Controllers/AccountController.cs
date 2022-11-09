@@ -10,10 +10,12 @@ namespace HotelListing.API.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAuthManager auth;
+        private readonly ILogger<AccountController> logger;
 
-        public AccountController(IAuthManager _auth)
+        public AccountController(IAuthManager _auth, ILogger<AccountController> logger)
         {
             auth = _auth;
+            this.logger = logger;
         }
 
         // Post: api/Account/register
@@ -24,17 +26,26 @@ namespace HotelListing.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult> Register([FromBody] HotelUserDto userDto)
         {
-            var err = await auth.Register(userDto);
-            if (err.Any())
+            logger.LogInformation($"Register Attempt for {userDto.Email}");
+            try
             {
-                foreach (var error in err)
+                var err = await auth.Register(userDto);
+                if (err.Any())
                 {
-                    ModelState.AddModelError(error.Code, error.Description);
+                    foreach (var error in err)
+                    {
+                        ModelState.AddModelError(error.Code, error.Description);
+                    }
+                    return BadRequest(ModelState);
                 }
-                return BadRequest(ModelState);
-            }
 
-            return Ok();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"Exeception At {typeof(Register)}, by {userDto.Email}");
+                return Problem(ex.Message, statusCode:500);
+            }
         }
 
         // Post: api/Account/login
