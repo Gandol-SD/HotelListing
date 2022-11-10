@@ -1,4 +1,5 @@
-﻿using HotelListing.API.Data.RepositoryInterfaces;
+﻿using AutoMapper;
+using HotelListing.API.Data.RepositoryInterfaces;
 using HotelListing.API.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,7 +7,7 @@ namespace HotelListing.API.Data.Repositories
 {
     public class HotelsRepository : Repository<Hotel>, IHotelsRepository
     {
-        public HotelsRepository(ApiDBX _dbx) : base(_dbx)
+        public HotelsRepository(ApiDBX _dbx, IMapper mapper) : base(_dbx, mapper)
         {
             dbx = _dbx;
         }
